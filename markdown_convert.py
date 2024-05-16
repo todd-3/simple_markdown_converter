@@ -8,12 +8,12 @@ import argparse
 
 # link replacement
 # [name](url) -> <a href=url>name</a>
-link_replace_regex = re.compile(r'\[([^\[\]]+)\]\(([^\(\)]+)\)')
+link_replace_regex = re.compile(r'\[([^\[\]]+)]\(([^()]+)\)')
 link_replace_func = lambda parts: "<a href=\"{1}\">{0}</a>".format(*parts.groups())
 
 # bold replacement
 # **text** -> <b>text</b>
-bold_replace_regex = re.compile(r'[\*_]{2}([^\*]+)[\*_]{2}')
+bold_replace_regex = re.compile(r'[*_]{2}([^*]+)[*_]{2}')
 bold_replace_func = lambda parts: "<strong>{0}</strong>".format(*parts.groups())
 
 
