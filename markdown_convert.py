@@ -11,7 +11,10 @@ import argparse
 link_replace_regex = re.compile(r'\[([^\[\]]+)\]\(([^\(\)]+)\)')
 link_replace_func = lambda parts: "<a href=\"{1}\">{0}</a>".format(*parts.groups())
 
-
+# bold replacement
+# **text** -> <b>text</b>
+bold_replace_regex = re.compile(r'\*\*([^\*]+)\*\*')
+bold_replace_func = lambda parts: "<strong>{0}</strong>".format(*parts.groups())
 
 
 def get_args() -> argparse.Namespace:
@@ -42,8 +45,9 @@ if __name__ == "__main__":
             exit(1)
 
     anchors = link_replace_regex.sub(link_replace_func, source_text)
+    bolded = bold_replace_regex.sub(bold_replace_func, anchors)
 
-    output_text = anchors
+    output_text = bolded
 
     if not args.output:  # check if output flag was not raised
         print("Converted Text:\n\n" + output_text)
