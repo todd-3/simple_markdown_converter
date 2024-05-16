@@ -21,11 +21,17 @@ bold_replace_func = lambda parts: "<strong>{0}</strong>".format(*parts.groups())
 italics_replace_regex = re.compile(r'[*_]([^*]+)[*_]')
 italics_replace_func = lambda parts: "<em>{0}</em>".format(*parts.groups())
 
+# header replacement
+# #{n} text -> <h{n}>text</h{n}>
+header_replace_regex = re.compile(r'^(#{,6}) ([^\r\n]+)$', flags=re.MULTILINE)
+header_replace_func = lambda parts: f"<h{len(parts.groups()[0])}>{parts.groups()[1]}</h{len(parts.groups()[0])}>"
+
 
 replace_ops: dict[str: tuple[re.Pattern, callable(re.Match)]] = {
     "Links": (link_replace_regex, link_replace_func),
     "Bold": (bold_replace_regex, bold_replace_func),
-    "Italics": (italics_replace_regex, italics_replace_func)
+    "Italics": (italics_replace_regex, italics_replace_func),
+    "Headers": (header_replace_regex, header_replace_func)
 }
 
 
