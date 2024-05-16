@@ -22,6 +22,13 @@ italics_replace_regex = re.compile(r'[*_]([^*]+)[*_]')
 italics_replace_func = lambda parts: "<em>{0}</em>".format(*parts.groups())
 
 
+replace_ops: dict[str: tuple[re.Pattern, callable(re.Match)]] = {
+    "Links": (link_replace_regex, link_replace_func),
+    "Bold": (bold_replace_regex, bold_replace_func),
+    "Italics": (italics_replace_regex, italics_replace_func)
+}
+
+
 def get_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         prog="Simple Markdown Converter",
@@ -49,15 +56,13 @@ if __name__ == "__main__":
             print("Could not find file " + args.input)
             exit(1)
 
-    anchors = link_replace_regex.sub(link_replace_func, source_text)
-    bolded = bold_replace_regex.sub(bold_replace_func, anchors)
-    italics = italics_replace_regex.sub(italics_replace_func, bolded)
-
-    output_text = italics
+    for op_name, tools in replace_ops.items():
+        print(f"Running {op_name} Operation")
+        source_text = tools[0].sub(tools[1], source_text)
 
     if not args.output:  # check if output flag was not raised
-        print("Converted Text:\n\n" + output_text)
+        print("Converted Text:\n\n" + source_text)
     else:
         print(f"Writing converted text to file '{args.output}' - WARNING this will overwrite any existing file")
         with open(args.output, 'w') as out_file:
-            out_file.write(output_text)
+            out_file.write(source_text)
