@@ -28,16 +28,16 @@ header_replace_func = lambda parts: f"<h{len(parts.groups()[0])}>{parts.groups()
 
 # paragraph wrapping
 # wraps text in paragraph blocks
-paragraph_wrap_regex = re.compile(r'^([^#$]+)$', flags=re.MULTILINE)
+paragraph_wrap_regex = re.compile(r'^([^<]+)$', flags=re.MULTILINE)  # this expression needs to be improved
 paragraph_wrap_func = lambda parts: "<p>{0}</p>".format(*parts.groups())
 
 
 replace_ops: dict[str: tuple[re.Pattern, callable(re.Match)]] = {
+    "Headers": (header_replace_regex, header_replace_func),
     "Paragraphs": (paragraph_wrap_regex, paragraph_wrap_func),
     "Links": (link_replace_regex, link_replace_func),
     "Bold": (bold_replace_regex, bold_replace_func),
-    "Italics": (italics_replace_regex, italics_replace_func),
-    "Headers": (header_replace_regex, header_replace_func)
+    "Italics": (italics_replace_regex, italics_replace_func)
 }
 
 
