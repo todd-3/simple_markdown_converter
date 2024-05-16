@@ -16,6 +16,11 @@ link_replace_func = lambda parts: "<a href=\"{1}\">{0}</a>".format(*parts.groups
 bold_replace_regex = re.compile(r'[*_]{2}([^*]+)[*_]{2}')
 bold_replace_func = lambda parts: "<strong>{0}</strong>".format(*parts.groups())
 
+# italics replacement
+# *text* | _text_ -> <em>text</em>
+italics_replace_regex = re.compile(r'[*_]([^*]+)[*_]')
+italics_replace_func = lambda parts: "<em>{0}</em>".format(*parts.groups())
+
 
 def get_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
@@ -46,8 +51,9 @@ if __name__ == "__main__":
 
     anchors = link_replace_regex.sub(link_replace_func, source_text)
     bolded = bold_replace_regex.sub(bold_replace_func, anchors)
+    italics = italics_replace_regex.sub(italics_replace_func, bolded)
 
-    output_text = bolded
+    output_text = italics
 
     if not args.output:  # check if output flag was not raised
         print("Converted Text:\n\n" + output_text)
