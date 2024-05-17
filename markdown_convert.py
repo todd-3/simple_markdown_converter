@@ -37,13 +37,19 @@ header_replace_func = lambda parts: f"<h{len(parts.groups()[0])}>{parts.groups()
 paragraph_wrap_regex = re.compile(r'^(?!<h\d>|\n)([\D\d]+?)(?=\n\n|\n\Z|\Z)', flags=re.MULTILINE)
 paragraph_wrap_func = lambda parts: f"<p>{parts.groups()[0]}</p>"
 
+# line break replacement
+# two empty lines -> <br>
+linebreak_replace_regex = re.compile(r'\n\n\n')
+linebreak_replace_val = "<br>"
+
 
 replace_ops: dict[str: tuple[re.Pattern, callable(re.Match)]] = {
     "Headers": (header_replace_regex, header_replace_func),
     "Paragraphs": (paragraph_wrap_regex, paragraph_wrap_func),
     "Links": (link_replace_regex, link_replace_func),
     "Bold": (bold_replace_regex, bold_replace_func),
-    "Italics": (italics_replace_regex, italics_replace_func)
+    "Italics": (italics_replace_regex, italics_replace_func),
+    "Line Breaks": (linebreak_replace_regex, linebreak_replace_val)
 }
 
 
