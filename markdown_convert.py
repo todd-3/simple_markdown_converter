@@ -28,6 +28,12 @@ header_replace_func = lambda parts: f"<h{len(parts.groups()[0])}>{parts.groups()
 
 # paragraph wrapping
 # wraps text in paragraph blocks
+#
+# if text is seperated
+# like this. Its wrapped as one paragraph.
+# But if its like
+#
+# this. With a break between, its two separate blocks
 paragraph_wrap_regex = re.compile(r'^(?!<h\d>|\n)([\D\d]+?)(?=\n\n|\n\Z|\Z)', flags=re.MULTILINE)
 paragraph_wrap_func = lambda parts: f"<p>{parts.groups()[0]}</p>"
 
