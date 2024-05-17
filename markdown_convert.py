@@ -28,7 +28,7 @@ header_replace_func = lambda parts: f"<h{len(parts.groups()[0])}>{parts.groups()
 
 # paragraph wrapping
 # wraps text in paragraph blocks
-paragraph_wrap_regex = re.compile(r'^([^<]+)$', flags=re.MULTILINE)  # this expression needs to be improved
+paragraph_wrap_regex = re.compile(r'^(?!<h\d>|\n)([\D\d]+?)(?=\n\n|\n\Z|\Z)', flags=re.MULTILINE)  # this expression needs to be improved
 paragraph_wrap_func = lambda parts: f"<p>{parts.groups()[0]}</p>"
 
 
