@@ -14,12 +14,12 @@ link_replace_func = lambda parts: "<a href=\"{1}\">{0}</a>".format(*parts.groups
 # bold replacement
 # **text** | __text__ -> <strong>text</strong>
 bold_replace_regex = re.compile(r'[*_]{2}([^*]+)[*_]{2}')
-bold_replace_func = lambda parts: "<strong>{0}</strong>".format(*parts.groups())
+bold_replace_func = lambda parts: f"<strong>{parts.groups()[0]}</strong>"
 
 # italics replacement
 # *text* | _text_ -> <em>text</em>
 italics_replace_regex = re.compile(r'[*_]([^*]+)[*_]')
-italics_replace_func = lambda parts: "<em>{0}</em>".format(*parts.groups())
+italics_replace_func = lambda parts: f"<em>{parts.groups()[0]}</em>"
 
 # header replacement
 # #{n} text -> <h{n}>text</h{n}>
@@ -29,7 +29,7 @@ header_replace_func = lambda parts: f"<h{len(parts.groups()[0])}>{parts.groups()
 # paragraph wrapping
 # wraps text in paragraph blocks
 paragraph_wrap_regex = re.compile(r'^([^<]+)$', flags=re.MULTILINE)  # this expression needs to be improved
-paragraph_wrap_func = lambda parts: "<p>{0}</p>".format(*parts.groups())
+paragraph_wrap_func = lambda parts: f"<p>{parts.groups()[0]}</p>"
 
 
 replace_ops: dict[str: tuple[re.Pattern, callable(re.Match)]] = {
