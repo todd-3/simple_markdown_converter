@@ -43,17 +43,24 @@ linebreak_replace_regex = re.compile(r'\n\n\n')
 linebreak_replace_val = "<br>"
 
 
-replace_ops: dict[str: tuple[re.Pattern, callable(re.Match)]] = {
-    "Headers": (header_replace_regex, header_replace_func),
-    "Paragraphs": (paragraph_wrap_regex, paragraph_wrap_func),
-    "Links": (link_replace_regex, link_replace_func),
-    "Bold": (bold_replace_regex, bold_replace_func),
-    "Italics": (italics_replace_regex, italics_replace_func),
-    "Line Breaks": (linebreak_replace_regex, linebreak_replace_val)
-}
+def full_replace(markdown: str) -> str:
+    operations: dict[str: tuple[re.Pattern, callable(re.Match)]] = {
+        "Headers": (header_replace_regex, header_replace_func),
+        "Paragraphs": (paragraph_wrap_regex, paragraph_wrap_func),
+        "Links": (link_replace_regex, link_replace_func),
+        "Bold": (bold_replace_regex, bold_replace_func),
+        "Italics": (italics_replace_regex, italics_replace_func),
+        "Line Breaks": (linebreak_replace_regex, linebreak_replace_val)
+    }
+
+    for op, tools in operations.items():
+        print(f"Running {op} Operation")
+        markdown = tools[0].sub(tools[1], markdown)
+
+    return markdown
 
 
-def get_args() -> argparse.Namespace:
+if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         prog="Simple Markdown Converter",
         description="A simple tool to convert markdown into html."
@@ -63,11 +70,7 @@ def get_args() -> argparse.Namespace:
     parser.add_argument('--text', '-t', action='store_true', default=False)
     parser.add_argument('--output', '-o', type=str, default=None)
 
-    return parser.parse_args()
-
-
-if __name__ == "__main__":
-    args = get_args()
+    args = parser.parse_args()
 
     if args.text:  # check if the text flag was raised
         source_text: str = args.input
@@ -80,13 +83,11 @@ if __name__ == "__main__":
             print("Could not find file " + args.input)
             exit(1)
 
-    for op_name, tools in replace_ops.items():
-        print(f"Running {op_name} Operation")
-        source_text = tools[0].sub(tools[1], source_text)
+    converted_text = full_replace(source_text)
 
     if not args.output:  # check if output flag was not raised
-        print("Converted Text:\n\n" + source_text)
+        print("Converted Text:\n\n" + converted_text)
     else:
         print(f"Writing converted text to file '{args.output}' - WARNING this will overwrite any existing file")
         with open(args.output, 'w') as out_file:
-            out_file.write(source_text)
+            out_file.write(converted_text)
