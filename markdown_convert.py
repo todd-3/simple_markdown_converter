@@ -59,6 +59,20 @@ def full_replace(markdown: str) -> str:
 
     return markdown
 
+def single_line_replace(markdown: str, p_wrap: bool = True) -> str:
+    operations: dict[str: tuple[re.Pattern, callable(re.Match)]] = {
+        "Links": (link_replace_regex, link_replace_func),
+        "Bold": (bold_replace_regex, bold_replace_func),
+        "Italics": (italics_replace_regex, italics_replace_func)
+    }
+
+    for op, tools in operations.items():
+        print(f"Running {op} Operation")
+        markdown = tools[0].sub(tools[1], markdown)
+
+    if p_wrap:
+        markdown = "<p>" + markdown + "</p>"
+    return markdown
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
