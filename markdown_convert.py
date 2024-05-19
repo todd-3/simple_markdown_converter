@@ -34,7 +34,7 @@ header_replace_func = lambda parts: f"<h{len(parts.groups()[0])}>{parts.groups()
 # But if its like
 #
 # this. With a break between, its two separate blocks
-paragraph_wrap_regex = re.compile(r'^(?!<h\d>|\n)([\D\d]+?)(?=\n\n|\n\Z|\Z)', flags=re.MULTILINE)
+paragraph_wrap_regex = re.compile(r'^(?!<h\d>|\n| | ?[\-+*])([\D\d]+?)(?=\n\n|\n\Z|\Z|^ ?[\-+*])', flags=re.MULTILINE)
 paragraph_wrap_func = lambda parts: f"<p>{parts.groups()[0]}</p>"
 
 # line break replacement
