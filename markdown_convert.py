@@ -13,13 +13,13 @@ link_replace_func = lambda parts: "<a href=\"{1}\">{0}</a>".format(*parts.groups
 
 # bold replacement
 # **text** | __text__ -> <strong>text</strong>
-bold_replace_regex = re.compile(r'[*_]{2}([^*]+)[*_]{2}')
-bold_replace_func = lambda parts: f"<strong>{parts.groups()[0]}</strong>"
+bold_replace_regex = re.compile(r'(?P<e>[*_]{2})(?! )([^*_\n]+)(?P=e)')
+bold_replace_func = lambda parts: f"<strong>{parts.groups()[1]}</strong>"
 
 # italics replacement
 # *text* | _text_ -> <em>text</em>
-italics_replace_regex = re.compile(r'[*_]([^*]+)[*_]')
-italics_replace_func = lambda parts: f"<em>{parts.groups()[0]}</em>"
+italics_replace_regex = re.compile(r'(?P<e>[*_])(?! )([^*_\n]+)(?P=e)')
+italics_replace_func = lambda parts: f"<em>{parts.groups()[1]}</em>"
 
 # header replacement
 # #{n} text -> <h{n}>text</h{n}>
@@ -42,11 +42,25 @@ paragraph_wrap_func = lambda parts: f"<p>{parts.groups()[0]}</p>"
 linebreak_replace_regex = re.compile(r'\n\n\n')
 linebreak_replace_val = "<br>"
 
+# unordered list parsing
+unordered_list_finder = re.compile(r'^(?P<o> ?[\-*+] ?)([^\n]+)(?:\n^(?P=o)([^\n]+))*', flags=re.MULTILINE)
+def unordered_list_replace(detected: re.Match) -> str:
+    line_demark = detected.groups()[0]
+    list_items = detected.string[detected.start():detected.end()].split(line_demark)
+    unordered_list = "<ul>\n"
+    for item in list_items[1:]:
+        if item[-1] == "\n":
+            unordered_list += "    <li>" + item[:-1] + "</li>\n"
+        else:
+            unordered_list += "    <li>" + item + "</li>\n"
+    return unordered_list + "</ul>"
+
 
 def full_replace(markdown: str) -> str:
     operations: dict[str: tuple[re.Pattern, callable(re.Match)]] = {
         "Headers": (header_replace_regex, header_replace_func),
         "Paragraphs": (paragraph_wrap_regex, paragraph_wrap_func),
+        "Unordered Lists": (unordered_list_finder, unordered_list_replace),
         "Links": (link_replace_regex, link_replace_func),
         "Bold": (bold_replace_regex, bold_replace_func),
         "Italics": (italics_replace_regex, italics_replace_func),
